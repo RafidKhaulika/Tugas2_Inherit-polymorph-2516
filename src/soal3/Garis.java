@@ -3,6 +3,8 @@ package soal3;
 /**
  * Garis dibentuk dari dua objek Titik, yaitu titik awal dan titik akhir.
  * Hubungan ini disebut composition (has-a): Garis punya Titik.
+ * Garis menyimpan salinan Titik sendiri, sehingga perubahan pada Titik
+ * di luar Garis tidak ikut mengubah isi Garis (defensive copy).
  */
 public class Garis {
 
@@ -10,7 +12,8 @@ public class Garis {
     private Titik akhir;
 
     /**
-     * Membuat garis dari dua titik.
+     * Membuat garis dari dua titik. Kedua titik disalin lebih dulu,
+     * jadi Garis tidak memakai objek Titik milik pemanggil.
      *
      * @param awal titik awal, tidak boleh null
      * @param akhir titik akhir, tidak boleh null
@@ -20,8 +23,8 @@ public class Garis {
         if (awal == null || akhir == null) {
             throw new IllegalArgumentException("Titik awal dan titik akhir tidak boleh null.");
         }
-        this.awal = awal;
-        this.akhir = akhir;
+        this.awal = salin(awal);
+        this.akhir = salin(akhir);
     }
 
     /**
@@ -38,16 +41,26 @@ public class Garis {
     }
 
     /**
-     * Mengambil titik awal.
+     * Membuat salinan sebuah titik.
      *
-     * @return titik awal garis
+     * @param titik titik yang disalin
+     * @return objek Titik baru dengan koordinat yang sama
      */
-    public Titik getAwal() {
-        return this.awal;
+    private Titik salin(Titik titik) {
+        return new Titik(titik.getX(), titik.getY());
     }
 
     /**
-     * Mengubah titik awal.
+     * Mengambil salinan titik awal.
+     *
+     * @return salinan titik awal garis
+     */
+    public Titik getAwal() {
+        return salin(this.awal);
+    }
+
+    /**
+     * Mengubah titik awal dengan menyimpan salinannya.
      *
      * @param awal titik awal yang baru, tidak boleh null
      * @throws IllegalArgumentException jika titik null
@@ -56,20 +69,20 @@ public class Garis {
         if (awal == null) {
             throw new IllegalArgumentException("Titik awal tidak boleh null.");
         }
-        this.awal = awal;
+        this.awal = salin(awal);
     }
 
     /**
-     * Mengambil titik akhir.
+     * Mengambil salinan titik akhir.
      *
-     * @return titik akhir garis
+     * @return salinan titik akhir garis
      */
     public Titik getAkhir() {
-        return this.akhir;
+        return salin(this.akhir);
     }
 
     /**
-     * Mengubah titik akhir.
+     * Mengubah titik akhir dengan menyimpan salinannya.
      *
      * @param akhir titik akhir yang baru, tidak boleh null
      * @throws IllegalArgumentException jika titik null
@@ -78,7 +91,7 @@ public class Garis {
         if (akhir == null) {
             throw new IllegalArgumentException("Titik akhir tidak boleh null.");
         }
-        this.akhir = akhir;
+        this.akhir = salin(akhir);
     }
 
     /**
